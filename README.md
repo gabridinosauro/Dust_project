@@ -7,7 +7,7 @@ This is a step by step process to repeat the data analysis done in the paper:
 I will first have to download the data.
 There are two options:
 
-1. You can download the whole raw data from this link:
+1. You can download the whole raw data from this link INSERT LINK:
 2. Or you can download the combined phyloseq objects (see links below).
 
 
