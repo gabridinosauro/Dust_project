@@ -12,7 +12,7 @@ There are two options:
 
 
 There are three steps: 
-1. The first one is the bioinformatic procedure that, from demultiplexed data brings you to two ASV count tables one Bacteria/Archaea and one Fungi (Dada2 pipeline). Taxa tables will be also produced.
+1. The first one is the bioinformatic procedure that, from demultiplexed data brings you to two ASV count tables one Bacteria/Archaea and one Fungi (Dada2 pipeline). Taxa tables will be also produced. Scripts are inside the folder "bioinformatics".
 
 2. The second step brings you from an ASV count table, for both Bacteria/Archaea communities to a  phyloseq objects where ASV count tables, taxonomy and metadata of each condition is going to be used. 
 For convenience, the data will be divided in four data sets<br />
