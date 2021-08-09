@@ -23,5 +23,5 @@ For convenience, the data will be divided in four data sets<br />
       d)Dust dataset for Fungi,  this includes soil samples and dust samples from the locations PP, SCR, DS1 and DS2.<br />
 
 
-3. The third step includes the statistical analyses done, consisting in various scripts:
+3. The third step includes the statistical analyses done, consisting in various scripts from 1 to 15, in the stats folder.
 
