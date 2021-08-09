@@ -12,7 +12,7 @@ There are two options:
 
 
 There are three steps: 
-1. Only from raw data (point one above) the bioinformatic procedure that, from demultiplexed data brings you to two ASV count tables one Bacteria/Archaea and one Fungi (Dada2 pipeline). Taxa tables will be also produced. Scripts are inside the folder "bioinformatics". End data will be saved as RDS file, to be easily imported into R. The final results are all inside the {"end_dada2" folder). These files are necessary only for the following step.
+1. Only from raw data (point one above): the bioinformatic procedure that, from demultiplexed data brings you to two ASV count tables one Bacteria/Archaea and one Fungi (Dada2 pipeline). Taxa tables will be also produced. Scripts are inside the folder "bioinformatics". End data will be saved as RDS file, to be easily imported into R. The final results are all inside the {"end_dada2" folder). These files are necessary only for the following step.
 
 2. The second step brings you from the outputs of dada2 for both Bacteria/Archaea communities to phyloseq objects where ASV count tables, taxonomy and metadata of each condition are cleant and organized in the two different datasets (dust and soil).
 The output will therefore create the four data sets used for statistical analysis: <br />
