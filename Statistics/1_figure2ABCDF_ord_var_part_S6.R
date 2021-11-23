@@ -20,14 +20,13 @@ library(adespatial)
 
 #### Load the data for soil###
 ASVtab_soil=readRDS("/Users/gabri/Documents/GitHub/Dust_project/data/phyloseq_obects/phyloseq_soil16sASVnames.RDS")
-asvtab_css = phyloseq_transform_css(ASVtab_soil) #css transformation
+asvtab_css = metagMisc::phyloseq_transform_css(ASVtab_soil) #css transformation
 asvtab_css = data.frame(t(asvtab_css@otu_table)) #extract ASV table css transformed form phyloseq object
 asvtab_soil = data.frame(t(ASVtab_soil@otu_table)) #extract ASVt table not transformed
 ASVtab_soil_merged <- merge_samples(ASVtab_soil, sample_data(ASVtab_soil)$point, fun=mean) ####merge togheter samples at each location
-ASVtab_soil_merged = phyloseq_transform_css(ASVtab_soil_merged)
+ASVtab_soil_merged = metagMisc::phyloseq_transform_css(ASVtab_soil_merged)
 asvtab_soil_merged = data.frame(t(ASVtab_soil_merged@otu_table))  #extract ASV table merged
 sam_data_soil = data.frame(ASVtab_soil@sam_data)
-
 
 
 
@@ -79,11 +78,11 @@ bacteria.ecolind= cbind(Richness.rar,Shannon.rar,Evenness.rar)#bid all togheter
 #####calculate community indexes for fungi
 #load the data
 ASVtab_soil_fungi=readRDS("/Users/gabri/Documents/GitHub/Dust_project/data/phyloseq_obects/phyloseq_soilITS_ASVnames.RDS")
-asvtab_css_fungi = phyloseq_transform_css(ASVtab_soil_fungi) #css transformation
+asvtab_css_fungi = metagMisc::phyloseq_transform_css(ASVtab_soil_fungi) #css transformation
 asvtab_css_fungi = data.frame(t(asvtab_css_fungi@otu_table)) #extract ASV table css transformed form phyloseq object
 asvtab_soil_fungi = data.frame(t(ASVtab_soil_fungi@otu_table)) #extract ASVt table not transformed
 ASVtab_soil_merged_fungi <- merge_samples(ASVtab_soil_fungi, sample_data(ASVtab_soil_fungi)$point, fun=mean) ####merge togheter samples at each location
-ASVtab_soil_merged_fungi = phyloseq_transform_css(ASVtab_soil_merged)
+ASVtab_soil_merged_fungi = metagMisc::phyloseq_transform_css(ASVtab_soil_merged)
 asvtab_soil_merged_fungi = data.frame(t(ASVtab_soil_merged@otu_table))  #extract ASV table merged
 #calculate community indexes
 Richness.rar.fung = specnumber(rrarefy(t(asvtab_soil_fungi), 12000))
@@ -398,11 +397,11 @@ bac.NMDS.plot
 ###############Fungi#################################
 ###all values are lower than 5 (we do not want valued higher than 5)
 ASVtab_soil_fungi=readRDS("/Users/gabri/Documents/GitHub/Dust_project/data/phyloseq_obects/phyloseq_soilITS_ASVnames.RDS")
-asvtab_css_fungi = phyloseq_transform_css(ASVtab_soil_fungi) #css transformation
+asvtab_css_fungi = metagMisc::phyloseq_transform_css(ASVtab_soil_fungi) #css transformation
 asvtab_css_fungi = data.frame(t(asvtab_css_fungi@otu_table)) #extract ASV table css transformed form phyloseq object
 asvtab_soil_fungi = data.frame(t(ASVtab_soil_fungi@otu_table)) #extract ASVt table not transformed
 ASVtab_soil_fungi_merged <- merge_samples(ASVtab_soil_fungi, sample_data(ASVtab_soil_fungi)$point, fun=mean) ####merge togheter samples at each location
-ASVtab_soil_fungi_merged = phyloseq_transform_css(ASVtab_soil_fungi_merged)
+ASVtab_soil_fungi_merged = metagMisc::phyloseq_transform_css(ASVtab_soil_fungi_merged)
 asvtab_soil_fungi_merged = data.frame(t(ASVtab_soil_fungi_merged@otu_table))  #extract ASV table merged
 sam_data = data.frame(ASVtab_soil_fungi@sam_data)
 
@@ -599,11 +598,11 @@ ASVtab_dust_bac@sam_data =sample_data(sam_data)
 ASVtab_dust_bac@sam_data$Repetition=factor(ASVtab_dust_bac@sam_data$Repetition)
 
 asvtab_dust_bac = data.frame(ASVtab_dust_bac@otu_table)#extract ASV table
-ASVtab_dust_bac_css = phyloseq_transform_css(ASVtab_dust_bac)#CSS transform
+ASVtab_dust_bac_css = metagMisc::phyloseq_transform_css(ASVtab_dust_bac)#CSS transform
 asvtab_dust_bac_css = data.frame(t(ASVtab_dust_bac_css@otu_table)) #extract CSS transformed ASV table
 sam_data$total <- paste(sam_data$point,sam_data$Dust_Type)
 ASVtab_dust_merged <- merge_samples(ASVtab_dust_bac, sam_data$total, fun=mean) ####merge togheter samples at each location
-ASVtab_dust_merged = phyloseq_transform_css(ASVtab_dust_merged)
+ASVtab_dust_merged = metagMisc::phyloseq_transform_css(ASVtab_dust_merged)
 asvtab_dust_merged = data.frame(t(ASVtab_dust_merged@otu_table))  #extract ASV table merged
 
 
@@ -658,7 +657,7 @@ graph = cbind(graph,graph1)
 graph <- graph[,-c(1,14)]
 replacements <- data.table::data.table(
   old = c("1", "10", "11", "18"),
-  new = c("PP", "SCR", "DB1", "DB2")
+  new = c("PP", "SCR", "DS1", "DS2")
 )
 
 graph$Site <- replacements$new[match(graph$point, replacements$old)]
@@ -768,7 +767,7 @@ graph = cbind(graph,graph1)
 graph <- graph[,-c(1,14)]
 replacements <- data.table::data.table(
   old = c("1", "10", "11", "18"),
-  new = c("PP", "SCR", "DB1", "DB2")
+  new = c("PP", "SCR", "DS1", "DS2")
 )
 
 graph$Site <- replacements$new[match(graph$point, replacements$old)]
@@ -803,3 +802,4 @@ fung.dust.NMDS.plot
 
 ggarrange(bac.dust.NMDS.plot, fung.dust.NMDS.plot, bac.NMDS.plot, fung.NMDS.plot, labels = "AUTO")
 
+#ggsave("/Users/gabri/OneDrive - University of Arizona/dust_project/3rd_draft/plots/new_figures/figure2.pdf", device = "pdf", height = 7, width = 11)

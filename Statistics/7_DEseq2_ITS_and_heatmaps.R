@@ -20,7 +20,8 @@ asvtab_no26@sam_data =sample_data(sam_data)
 asvtab_no26@sam_data$Repetition=factor(asvtab_no26@sam_data$Repetition)
 rm(asvtab)
 asvtab1 = data.frame(t(asvtab_no26@otu_table))
-
+asvtab1 = asvtab1[rowSums(asvtab1 != 0) >= 3, ]
+asvtab_no26@otu_table =otu_table(asvtab1, taxa_are_rows = TRUE)
 
 
 
@@ -46,6 +47,11 @@ resLFC <- lfcShrink(diagdds, coef=c("Dust_Type_Dust_Gen_vs_Soil"), type="apeglm"
 summary(resLFC, pAdjustMethod = "BH", alpha =  0.05) #85 up , 103 down
 par(mfrow=c(1,1))
 DESeq2::plotMA(resLFC)
+Log2foldchanges = data.frame(resLFC)
+Log2foldchanges = cbind(Log2foldchanges, as(tax_table(asvtab_no26)[rownames(Log2foldchanges), ], "matrix"))
+saveRDS(Log2foldchanges, "/Users/gabri/Documents/GitHub/Dust_project/data/Deseq2/log2foldchanges_fun_WT.RDS")
+
+
 ggplot(as(resLFC, "data.frame"), aes(x = pvalue)) +
   geom_histogram(binwidth = 0.01, fill = "Royalblue", boundary = 0)
 alpha = 0.05
@@ -290,7 +296,7 @@ a
 
 
 
-#############################RESULTS 75 bacteria#############################
+#############################RESULTS 75 fungi#############################
 
 res = results(diagdds,  contrast=c("Dust_Type","75","Soil"), pAdjustMethod = "BH", alpha =  0.05)
 summary(res)

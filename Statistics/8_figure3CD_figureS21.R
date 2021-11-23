@@ -4,6 +4,20 @@ library(ggpubr)
 
 #read sigtab
 significantDG = readRDS(file = "/Users/gabri/Documents/GitHub/Dust_project/data/Deseq2/sigtabDEseq21DG.RDS")
+#### 
+increasing = significantDG[significantDG$log2FoldChange > 0, ]
+###list 3 more common phyla
+sort(table(increasing$Phylum) / nrow(increasing))
+# Actinobacteria 35 %
+# Proteobacteria 28%
+# Bacteroidetes 16%
+decreasing = significantDG[significantDG$log2FoldChange < 0, ]
+sort(table(decreasing$Phylum) / nrow(decreasing))
+# Actinobacteria 43%
+# Proteobacteria 11%
+# Bacteroidetes 5%
+# Chloroflexi 15%
+
 ###select only the 50 most abundant ones, otherwise we cannot see anything
 sigtab50 = significantDG
 sigtab50$color = ifelse(sigtab50$log2FoldChange > 0, "Increase" , "Decrease")
@@ -27,9 +41,9 @@ decreasing = sigtab50[sigtab50$color == "Decrease", ]
 
 ###Order them by abundance and select first ten
 increasing = increasing[sort(-increasing$abundance),]
-increasing = increasing[1:5,]
+increasing = increasing[1:10,]
 decreasing = decreasing[sort(-decreasing$abundance),]
-decreasing = decreasing[1:5,]
+decreasing = decreasing[1:10,]
 ###bind them
 increasing_decreasing = rbind(increasing,decreasing)
 
@@ -71,16 +85,16 @@ decreasing = sigtab50[sigtab50$color == "Decrease", ]
 
 ###Order them by abundance and select first ten
 increasing = increasing[sort(-increasing$abundance),]
-increasing = increasing[1:5,]
+increasing = increasing[1:10,]
 decreasing = decreasing[sort(-decreasing$abundance),]
-decreasing = decreasing[1:5,]
+decreasing = decreasing[1:10,]
 ###bind them
 increasing_decreasing = rbind(increasing,decreasing)
 
 Coarse = ggplot(increasing_decreasing, 
             aes(log2FoldChange, y = name, fill = color)) +
   geom_col(border = NA) + theme_classic() + geom_vline(xintercept =  0, size = 0.3) +
-  ylab("ASV")+ggtitle("Bact/Arch,  coarse SP") + theme(axis.text.x = element_text(angle = 45, hjust = 1))+ coord_flip()+
+  ylab("ASV")+ggtitle("Bact/Arch,  coarse SS") + theme(axis.text.x = element_text(angle = 45, hjust = 1))+ coord_flip()+
   scale_fill_manual(name = "Sample", labels = c("Soil", "Dust"), values = c("#996600","4DBBD5B2")) + ylab(NULL)
 Coarse
 
@@ -111,16 +125,16 @@ decreasing = sigtab50[sigtab50$color == "Decrease", ]
 
 ###Order them by abundance and select first ten
 increasing = increasing[sort(-increasing$abundance),]
-increasing = increasing[1:5,]
+increasing = increasing[1:10,]
 decreasing = decreasing[sort(-decreasing$abundance),]
-decreasing = decreasing[1:5,]
+decreasing = decreasing[1:10,]
 ###bind them
 increasing_decreasing = rbind(increasing,decreasing)
 
 medium = ggplot(increasing_decreasing, 
                 aes(log2FoldChange, y = name, fill = color)) +
   geom_col(border = NA) + theme_classic() + geom_vline(xintercept =  0, size = 0.3) +
-  ylab("ASV")+ggtitle("Bact/Arch,  medium SP") + theme(axis.text.x = element_text(angle = 45, hjust = 1))+ coord_flip()+
+  ylab("ASV")+ggtitle("Bact/Arch,  medium SS") + theme(axis.text.x = element_text(angle = 45, hjust = 1))+ coord_flip()+
   scale_fill_manual(name = "Sample", labels = c("Soil", "Dust"), values = c("#996600","4DBBD5B2")) + ylab(NULL)
 medium
 
@@ -152,20 +166,20 @@ decreasing = sigtab50[sigtab50$color == "Decrease", ]
 
 ###Order them by abundance and select first ten
 increasing = increasing[sort(-increasing$abundance),]
-increasing = increasing[1:5,]
+increasing = increasing[1:10,]
 decreasing = decreasing[sort(-decreasing$abundance),]
-decreasing = decreasing[1:5,]
+decreasing = decreasing[1:10,]
 ###bind them
 increasing_decreasing = rbind(increasing,decreasing)
 
 fine = ggplot(increasing_decreasing, 
                 aes(log2FoldChange, y = name, fill = color)) +
   geom_col(border = NA) + theme_classic() + geom_vline(xintercept =  0, size = 0.3) +
-  ylab("ASV")+ggtitle("Bact/Arch,  fine SP") + theme(axis.text.x = element_text(angle = 45, hjust = 1))+ coord_flip()+
+  ylab("ASV")+ggtitle("Bact/Arch,  fine SS") + theme(axis.text.x = element_text(angle = 45, hjust = 1))+ coord_flip()+
   scale_fill_manual(name = "Sample", labels = c("Soil", "Dust"), values = c("#996600","4DBBD5B2")) + ylab(NULL)
 fine
 
-ggarrange(DG, Coarse, medium, fine, common.legend = TRUE, ncol = 4)
+bac = ggarrange( Coarse, medium, fine, common.legend = TRUE, ncol = 3)
 
 
 
@@ -215,9 +229,9 @@ decreasing = sigtab50[sigtab50$color == "Decrease", ]
 
 ###Order them by abundance and select first ten
 increasing = increasing[sort(-increasing$abundance),]
-increasing = increasing[1:5,]
+increasing = increasing[1:10,]
 decreasing = decreasing[sort(-decreasing$abundance),]
-decreasing = decreasing[1:5,]
+decreasing = decreasing[1:10,]
 ###bind them
 increasing_decreasing = rbind(increasing,decreasing)
 
@@ -260,16 +274,16 @@ decreasing = sigtab50[sigtab50$color == "Decrease", ]
 
 ###Order them by abundance and select first ten
 increasing = increasing[sort(-increasing$abundance),]
-increasing = increasing[1:5,]
+increasing = increasing[1:10,]
 decreasing = decreasing[sort(-decreasing$abundance),]
-decreasing = decreasing[1:5,]
+decreasing = decreasing[1:10,]
 ###bind them
 increasing_decreasing = rbind(increasing,decreasing)
 increasing_decreasing = increasing_decreasing[rowSums(is.na(increasing_decreasing)) != ncol(increasing_decreasing), ]
 Coarse_fung = ggplot(increasing_decreasing, 
                 aes(log2FoldChange, y = name, fill = color)) +
   geom_col(border = NA) + theme_classic() + geom_vline(xintercept =  0, size = 0.3) +
-  ylab("ASV")+ggtitle("Fungi,  coarse SP") + theme(axis.text.x = element_text(angle = 45, hjust = 1))+ coord_flip()+
+  ylab("ASV")+ggtitle("Fungi,  coarse SS") + theme(axis.text.x = element_text(angle = 45, hjust = 1))+ coord_flip()+
   scale_fill_manual(name = "Sample", labels = c("Soil", "Dust"), values = c("#996600","4DBBD5B2")) + ylab(NULL)
 Coarse_fung
 
@@ -301,16 +315,16 @@ decreasing = sigtab50[sigtab50$color == "Decrease", ]
 
 ###Order them by abundance and select first ten
 increasing = increasing[sort(-increasing$abundance),]
-increasing = increasing[1:5,]
+increasing = increasing[1:10,]
 decreasing = decreasing[sort(-decreasing$abundance),]
-decreasing = decreasing[1:5,]
+decreasing = decreasing[1:10,]
 ###bind them
 increasing_decreasing = rbind(increasing,decreasing)
 increasing_decreasing = increasing_decreasing[rowSums(is.na(increasing_decreasing)) != ncol(increasing_decreasing), ]
 medium_fung = ggplot(increasing_decreasing, 
                 aes(log2FoldChange, y = name, fill = color)) +
   geom_col(border = NA) + theme_classic() + geom_vline(xintercept =  0, size = 0.3) +
-  ylab("ASV")+ggtitle("Bact/Arch,  medium SP") + theme(axis.text.x = element_text(angle = 45, hjust = 1))+ coord_flip()+
+  ylab("ASV")+ggtitle("Bact/Arch,  medium SS") + theme(axis.text.x = element_text(angle = 45, hjust = 1))+ coord_flip()+
   scale_fill_manual(name = "Sample", labels = c("Soil", "Dust"), values = c("#996600","4DBBD5B2")) + ylab(NULL)
 medium_fung
 
@@ -343,9 +357,9 @@ decreasing = sigtab50[sigtab50$color == "Decrease", ]
 
 ###Order them by abundance and select first ten
 increasing = increasing[sort(-increasing$abundance),]
-increasing = increasing[1:5,]
+increasing = increasing[1:10,]
 decreasing = decreasing[sort(-decreasing$abundance),]
-decreasing = decreasing[1:5,]
+decreasing = decreasing[1:10,]
 ###bind them
 increasing_decreasing = rbind(increasing,decreasing)
 increasing_decreasing = increasing_decreasing[rowSums(is.na(increasing_decreasing)) != ncol(increasing_decreasing), ]
@@ -359,10 +373,12 @@ fine_fung
 
 
 
-ggarrange(DGfung, Coarse_fung, medium_fung, fine_fung, common.legend = TRUE, ncol = 4)
-a = ggarrange(DG, Coarse, medium, fine, ncol = 4,  common.legend = TRUE)
-a
- ggsave("/Users/gabri/OneDrive - University of Arizona/dust_project/IMAGE_ELABORATION/fig4_bac.pdf")
+
+fun = ggarrange( Coarse_fung, medium_fung, fine_fung, common.legend = TRUE, ncol = 3)
+
+ggarrange(DG, DGfung, ncol = 1 )
+ ggsave("/Users/gabri/OneDrive - University of Arizona/dust_project/IMAGE_ELABORATION/diff_ab.pdf", height = 8, width = 5)
 
 
-
+ggarrange(bac, fun, ncol = 1 )
+ ggsave("/Users/gabri/OneDrive - University of Arizona/dust_project/IMAGE_ELABORATION/diff_ab.pdf", height = 8, width = 10)

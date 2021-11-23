@@ -23,7 +23,7 @@ relative_abundances_samples = decostand(asvtable_samples, method = "total" , MAR
 relative_abundances_samples[relative_abundances_samples == 0] <- NA #create a vector to store the variables
 relative_abundances$Ab_bysamples = rowMeans(relative_abundances_samples, na.rm = TRUE)  #calculate means and store it in a vector
 #per point
-asvtabmerged=merge_samples(asvtab, as.factor(sample_data(asvtab)$point), fun=mean) #merge samples into points (3 repetitions merged into one)
+asvtabmerged=merge_samples(asvtab, as.factor(sample_data(asvtab)$point), fun=sum) #merge samples into points (3 repetitions merged into one)
 asvtabmerged <- prune_taxa(taxa_sums(asvtabmerged) > 0, asvtabmerged) #merge samples into points (3 repetitions merged into one)
 asvtable_points = data.frame(t(asvtabmerged@otu_table)) #extract dataframe from  phyloseq
 relative_abundances_points = decostand(asvtable_points, method = "total" , MARGIN = 2) #calculate relative abundance
@@ -159,12 +159,10 @@ distances = distances/1000
 
 
 ########save final table#############
+length(unique(rownames(occupancy) == rownames(relative_abundances))) == 1 # vectors are all the same
 final = cbind(occupancy, relative_abundances)
-final$distances = NA
-for (i in 1:nrow(final))  {final$distances[i] = distances[rownames(final)[i], 1] }
-final$geo_range = NA
-for (i in 1:nrow(final))  {final$geo_range[i] = areas1[rownames(final)[i], 2] }
-
+final$distances = distances[match(rownames(final), rownames(distances)), 1]
+final$geo_range = areas1[match(rownames(final), rownames(areas1)), 2]
 saveRDS(final, file = "Documents/GitHub/Dust_project/data/metadata/geo_dist_data.RDS")
 
 
@@ -199,7 +197,7 @@ relative_abundances_samples = decostand(asvtable_samples, method = "total" , MAR
 relative_abundances_samples[relative_abundances_samples == 0] <- NA #create a vector to store the variables
 relative_abundances$Ab_bysamples = rowMeans(relative_abundances_samples, na.rm = TRUE)  #calculate means and store it in a vector
 #per point
-asvtabmerged=merge_samples(asvtab, as.factor(sample_data(asvtab)$point), fun=mean) #merge samples into points (3 repetitions merged into one)
+asvtabmerged=merge_samples(asvtab, as.factor(sample_data(asvtab)$point), fun=sum) #merge samples into points (3 repetitions merged into one)
 asvtabmerged <- prune_taxa(taxa_sums(asvtabmerged) > 0, asvtabmerged) #merge samples into points (3 repetitions merged into one)
 asvtable_points = data.frame(t(asvtabmerged@otu_table)) #extract dataframe from  phyloseq
 relative_abundances_points = decostand(asvtable_points, method = "total" , MARGIN = 2) #calculate relative abundance
@@ -337,10 +335,8 @@ distances = distances/1000
 
 ########save final table#############
 final = cbind(occupancy, relative_abundances)
-final$distances = NA
-for (i in 1:nrow(final))  {final$distances[i] = distances[rownames(final)[i], 1] }
-final$geo_range = NA
-for (i in 1:nrow(final))  {final$geo_range[i] = areas1[rownames(final)[i], 2] }
+final$distances = distances[match(rownames(final), rownames(distances)), 1]
+final$geo_range = areas1[match(rownames(final), rownames(areas1)), 2]
 
 saveRDS(final, file = "Documents/GitHub/Dust_project/data/metadata/geo_dist_dataITS.RDS")
 

@@ -54,9 +54,9 @@ a = ggplot(databac, aes(Distance,Dissimilarity))+
 
 a
 
-#ggsave( "/Users/gabri/OneDrive - University of Arizona/dust_project/Second_draft/new_figures/dist_dec_bac.pdf",
-#        device = "pdf", 
-#        a)
+ggsave( "/Users/gabri/OneDrive - University of Arizona/dust_project/3rd_draft/plots/new_figures/dist_dec_bac.pdf",
+        device = "pdf", 
+        a)
 
 
 #saveRDS(a, "/Users/gabri/OneDrive - University of Arizona/dust_project/IMAGE_ELABORATION/cor_bac.RDS")
@@ -117,7 +117,6 @@ mantel.rtest(beta_div, dist.mat, nrepet = 9999)
 
 a = ggplot(databac, aes(Distance,Dissimilarity))+
   geom_point(shape = 1) +
-  annotate("text", x=140000, y=0.65, label= "Mantel r = 0.12; P = 0.03") +
   stat_smooth(method = "lm", formula = y ~ x,   se = FALSE)+
   theme_bw() +
   ggtitle("Fungi") +
@@ -125,7 +124,7 @@ a = ggplot(databac, aes(Distance,Dissimilarity))+
   theme_classic()
 a
 
-ggsave( "/Users/gabri/OneDrive - University of Arizona/dust_project/Second_draft/new_figures/dist_dec_fun.pdf",
+ggsave( "/Users/gabri/OneDrive - University of Arizona/dust_project/3rd_draft/plots/new_figures/new_fungi.pdf",
         device = "pdf", 
         a)
 

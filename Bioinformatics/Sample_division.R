@@ -90,10 +90,11 @@ dust <- merge_phyloseq(dust, metadata_dust)
 dust@sam_data=dust@sam_data[,-c(1,2,3)]
 soil = prune_samples(sample_names(soil)!="DP24-01-S", soil) ####eliminate DP24-01-S point  - less than 10000 reads
 soil <- prune_taxa(taxa_sums(soil) > 0, soil)
-
-
 ###summary of table
 ASVtab_soil = data.frame(t(soil@otu_table))
+nrow(ASVtab_soil)#16431
+mean(colSums(ASVtab_soil!=0)) #number of sequences per sample 633.36
+sd(colSums(ASVtab_soil!=0)) #SD 126.84
 taxatab = data.frame(soil@tax_table)
 ASVtab_soil$phylum = taxatab$Phylum[match(rownames(ASVtab_soil), rownames(taxatab))]
 ASVtab_soil = aggregate(. ~ phylum ,data = ASVtab_soil,  FUN = sum)
@@ -111,7 +112,9 @@ fractions
 ASVtab_dust = data.frame(t(dust@otu_table))
 ASVtab_dust = ASVtab_dust[,-c(1,2,3,16,17,18,31,32,33,46,47,48)]
 ASVtab_dust = ASVtab_dust[rowSums(ASVtab_dust[])>0,]
-
+nrow(ASVtab_dust)#9448
+mean(colSums(ASVtab_dust!=0)) #number of sequences per sample 786.02
+sd(colSums(ASVtab_dust!=0)) #SD 176.96
 taxatab = data.frame(dust@tax_table)
 ASVtab_dust$phylum = taxatab$Phylum[match(rownames(ASVtab_dust), rownames(taxatab))]
 ASVtab_dust = aggregate(. ~ phylum ,data = ASVtab_dust,  FUN = sum)
@@ -233,6 +236,9 @@ dust@sam_data=dust@sam_data[,-c(1,2,3)]
 
 ###summary of table
 ASVtab_soil = data.frame(t(soil@otu_table))
+nrow(ASVtab_soil)#4791
+mean(colSums(ASVtab_soil!=0)) #number of sequences per sample 159.16
+sd(colSums(ASVtab_soil!=0)) #SD 53.63
 taxatab = data.frame(soil@tax_table)
 ASVtab_soil$phylum = taxatab$Phylum[match(rownames(ASVtab_soil), rownames(taxatab))]
 ASVtab_soil = aggregate(. ~ phylum ,data = ASVtab_soil,  FUN = sum)
@@ -250,7 +256,9 @@ fractions
 ASVtab_dust = data.frame(t(dust@otu_table))
 ASVtab_dust = ASVtab_dust[,-c(1,2,3,16,17,18,31,32,33,46,47,48)]
 ASVtab_dust = ASVtab_dust[rowSums(ASVtab_dust[])>0,]
-
+nrow(ASVtab_dust)#2515
+mean(colSums(ASVtab_dust!=0)) #number of sequences per sample 181.19
+sd(colSums(ASVtab_dust!=0)) #SD 70.8
 taxatab = data.frame(dust@tax_table)
 ASVtab_dust$phylum = taxatab$Phylum[match(rownames(ASVtab_dust), rownames(taxatab))]
 ASVtab_dust = aggregate(. ~ phylum ,data = ASVtab_dust,  FUN = sum)

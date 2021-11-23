@@ -10,80 +10,51 @@ library(metagMisc)
 
 #########LOAD AND PREPARE THE DATA##################
 asvtab<-readRDS("/Users/gabri/Documents/GitHub/Dust_project/data/phyloseq_obects/phyloseq_dust16sASVnames.RDS")
-asvtab_no26 <- prune_taxa(taxa_sums(asvtab) > 0, asvtab)#elimiante_zero_counts
-rank_names(asvtab_no26)
-#asvtab_no26 = tax_glom(asvtab_no26, taxrank=rank_names(asvtab_no26)[2], NArm=TRUE, bad_empty=c(NA, "", " ", "\t"))
-sam_data = data.frame(asvtab_no26@sam_data)
+sam_data = data.frame(asvtab@sam_data) #extract sam_data
 sam_data = sam_data[,-1] #eliminate first column (useless)
-sam_data$sample <- paste(sam_data$Point_type,sam_data$Repetition, sep = "_")
+sam_data$sample <- paste(sam_data$Point_type,sam_data$Repetition, sep = "_")##create a repetition column
 #####insert new asvtab into the phyloseq object
-asvtab_no26@sam_data =sample_data(sam_data) 
-asvtab_no26@sam_data$Repetition=factor(asvtab_no26@sam_data$Repetition)
-rm(asvtab)
-asvtab1 = data.frame(t(asvtab_no26@otu_table))
-#sam_data$Dust_Type[sam_data$Dust_Type == "Dust_Gen"] <- "WT"
-#sam_data$Dust_Type<- factor(sam_data$Dust_Type,levels = c("Soil", "500", "75", "25", "WT"))
-
-#rarecurve(t(asvtab1), step=50, cex=0.5)
-hist(rowSums(t(asvtab1)))
-summary(rowSums(t(asvtab1)))
-
-
-#test community similarity
-phyloseqCSS = phyloseq_transform_css(asvtab_no26)
-asvtabCSS = t(phyloseqCSS@otu_table)
-betadiv = adonis(asvtabCSS~sam_data$Dust_Type + sam_data$Point_type, strata = sam_data$Point_type)
-betadiv
-#Blocks:  strata 
-#Permutation: free
-#Number of permutations: 999
-
-#Terms added sequentially (first to last)
-
-#Df SumsOfSqs MeanSqs F.Model      R2 Pr(>F)    
-#sam_data$Dust_Type   4    1.0679 0.26696  2.1605 0.06955  0.001 ***
-#  sam_data$Point_type  3    7.8604 2.62014 21.2047 0.51196  0.001 ***
-#  Residuals           52    6.4253 0.12356         0.41849           
-#Total               59   15.3536                 1.00000           
-#---
-#  Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
-
-
-
-
-
+asvtab@sam_data =sample_data(sam_data) 
+asvtab@sam_data$Repetition=factor(asvtab@sam_data$Repetition)
+asvtab1 = data.frame(t(asvtab@otu_table)) # extract ASV table for later
+asvtab1 = asvtab1[rowSums(asvtab1 != 0) >= 3, ]
+asvtab@otu_table =otu_table(asvtab1, taxa_are_rows = TRUE)
 
 #####RUN DESeq2##############################################################
-diagdds = phyloseq_to_deseq2(asvtab_no26, ~  sample +  Dust_Type) #convert phyloseq into deseq2 ##samples are paired!
+diagdds = phyloseq_to_deseq2(asvtab, ~  sample +  Dust_Type) #convert phyloseq into deseq2 ##samples are paired!
 diagdds$Dust_Type <- relevel(diagdds$Dust_Type, ref = "Soil") ####relevel placing soil as reference
-#filtering (remove certain sequences)
-#diagdds = estimateSizeFactors(diagdds) #prestep for filtering
-##### equal or more than 3 samples (last number)samples with normalized counts higher than 2 (first number)
-#idx <- rowSums( counts(diagdds, normalized=TRUE) >= 10 ) >=3  
-#diagdds <- diagdds[idx,] 
 diagdds = DESeq(diagdds, test="Wald", fitType="parametric")
 resultsNames(diagdds)
-#saveRDS(diagdds, file = "/Users/gabri/OneDrive - University of Arizona/dust_project/data/dust/DEseq2file.RDS")
 
 
 
 
 
 
-#############################RESULTS DG (dust_generator) bacteria#############################
-res = results(diagdds,  name=c("Dust_Type_Dust_Gen_vs_Soil"), pAdjustMethod = "BH", alpha =  0.05)
+#############################RESULTS WT (Wind tunnel (orginally called Dust generator )) bacteria#############################
+res = results(diagdds,  name=c("Dust_Type_Dust_Gen_vs_Soil"), pAdjustMethod = "BH", alpha =  0.1)
 summary(res)
 resLFC <- lfcShrink(diagdds, coef=c("Dust_Type_Dust_Gen_vs_Soil"), type="apeglm")
-summary(resLFC, pAdjustMethod = "BH", alpha =  0.1) #292 up , 289 down
+summary(resLFC, pAdjustMethod = "BH", alpha =  0.05) #292 up , 289 down
 par(mfrow=c(1,1))
 DESeq2::plotMA(resLFC)
 ggplot(as(resLFC, "data.frame"), aes(x = pvalue)) +
   geom_histogram(binwidth = 0.05, fill = "Royalblue", boundary = 0)
 alpha = 0.05
+Log2foldchanges = data.frame(resLFC)
+Log2foldchanges = cbind(Log2foldchanges, as(tax_table(asvtab)[rownames(Log2foldchanges), ], "matrix"))
+saveRDS(Log2foldchanges, "/Users/gabri/Documents/GitHub/Dust_project/data/Deseq2/log2foldchanges_bac_WT.RDS")
 sigtab = resLFC[which(resLFC$padj < alpha), ]
-sigtabDG = cbind(as(sigtab, "data.frame"), as(tax_table(asvtab_no26)[rownames(sigtab), ], "matrix"))
+sigtabDG = cbind(as(sigtab, "data.frame"), as(tax_table(asvtab)[rownames(sigtab), ], "matrix"))
 head(sigtabDG)
 dim(sigtabDG)
+
+
+
+
+
+
+
 ###############DIAGNOSTIC PLOTS##########################
 ######## 9 less abundant
 par(mfrow=c(3,3))
@@ -131,9 +102,16 @@ rm(database)
 
 ###save new filter out from sigtab%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 sigtabDG = sigtabDG[rownames(sigtabDG) %in% soil_guys |rownames(sigtabDG) %in% dust_guys, ]
-sum(sigtabDG$log2FoldChange>0) #111 (119 at alpha 0.05)
-sum(sigtabDG$log2FoldChange<0) #62 (70 at alpha 0.05)
+sum(sigtabDG$log2FoldChange>0) #125 (119 at alpha 0.05)
+sum(sigtabDG$log2FoldChange<0) #70 (70 at alpha 0.05)
 saveRDS(sigtabDG, file = "/Users/gabri/Documents/GitHub/Dust_project/data/Deseq2/sigtabDEseq21DG.RDS")
+
+
+
+
+
+
+
 
 
 ############HEATMAP#######################
@@ -208,7 +186,7 @@ a = pheatmap(
   treeheight_row = 0
 )
 
-#a
+a
 
 dev.off()
 ######plot the increase decrease patterns of the most abundant ones
@@ -243,7 +221,7 @@ ggplot(as(resLFC, "data.frame"), aes(x = pvalue)) +
   geom_histogram(binwidth = 0.01, fill = "Royalblue", boundary = 0)
 alpha = 0.05
 sigtab = res[which(resLFC$padj < alpha), ]
-sigtab500 = cbind(as(sigtab, "data.frame"), as(tax_table(asvtab_no26)[rownames(sigtab), ], "matrix"))
+sigtab500 = cbind(as(sigtab, "data.frame"), as(tax_table(asvtab)[rownames(sigtab), ], "matrix"))
 head(sigtab500)
 dim(sigtab500)
 
@@ -340,7 +318,7 @@ a = pheatmap(
   cluster_cols =  F,
   treeheight_row = 0
 )
-#a
+a
 
 
 dev.off()
@@ -359,7 +337,7 @@ ggplot(as(res, "data.frame"), aes(x = pvalue)) +
   geom_histogram(binwidth = 0.01, fill = "Royalblue", boundary = 0)
 alpha = 0.05
 sigtab = resLFC[which(resLFC$padj < alpha), ]
-sigtab75 = cbind(as(sigtab, "data.frame"), as(tax_table(asvtab_no26)[rownames(sigtab), ], "matrix"))
+sigtab75 = cbind(as(sigtab, "data.frame"), as(tax_table(asvtab)[rownames(sigtab), ], "matrix"))
 head(sigtab75)
 dim(sigtab75)
 
@@ -466,7 +444,7 @@ ggplot(as(resLFC, "data.frame"), aes(x = pvalue)) +
   geom_histogram(binwidth = 0.01, fill = "Royalblue", boundary = 0)
 alpha = 0.05
 sigtab = resLFC[which(resLFC$padj < alpha), ]
-sigtab25 = cbind(as(sigtab, "data.frame"), as(tax_table(asvtab_no26)[rownames(sigtab), ], "matrix"))
+sigtab25 = cbind(as(sigtab, "data.frame"), as(tax_table(asvtab)[rownames(sigtab), ], "matrix"))
 head(sigtab25)
 dim(sigtab25)
 

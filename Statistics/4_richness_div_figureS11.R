@@ -33,10 +33,10 @@ ASVtab_dust@sam_data$Repetition=factor(ASVtab_dust@sam_data$Repetition)
 rm(asvtab)
 asvtab1 = data.frame(t(ASVtab_dust@otu_table))
 sam_data$Dust_Type[sam_data$Dust_Type == "Dust_Gen"] <- "WT"
-sam_data$Dust_Type[sam_data$Dust_Type == "500"] <- "Coarse SS"
-sam_data$Dust_Type[sam_data$Dust_Type == "75"] <- "Medium SS"
-sam_data$Dust_Type[sam_data$Dust_Type == "25"] <- "Fine SS"
-sam_data$Dust_Type<- factor(sam_data$Dust_Type,levels = c("Soil", "Coarse SS", "Medium SS", "Fine SS", "WT"))
+sam_data$Dust_Type[sam_data$Dust_Type == "500"] <- "Coarse LP"
+sam_data$Dust_Type[sam_data$Dust_Type == "75"] <- "Medium LP"
+sam_data$Dust_Type[sam_data$Dust_Type == "25"] <- "Fine LP"
+sam_data$Dust_Type<- factor(sam_data$Dust_Type,levels = c("Soil", "Coarse LP", "Medium LP", "Fine LP", "WT"))
 
 
 
@@ -144,10 +144,10 @@ ASVtab_dust_fungi@sam_data$Repetition=factor(ASVtab_dust_fungi@sam_data$Repetiti
 rm(asvtab)
 asvtab1 = data.frame(t(ASVtab_dust_fungi@otu_table))
 sam_data$Dust_Type[sam_data$Dust_Type == "Dust_Gen"] <- "WT"
-sam_data$Dust_Type[sam_data$Dust_Type == "500"] <- "Coarse SS"
-sam_data$Dust_Type[sam_data$Dust_Type == "75"] <- "Medium SS"
-sam_data$Dust_Type[sam_data$Dust_Type == "25"] <- "Fine SS"
-sam_data$Dust_Type<- factor(sam_data$Dust_Type,levels = c("Soil", "Coarse SS", "Medium SS", "Fine SS", "WT"))
+sam_data$Dust_Type[sam_data$Dust_Type == "500"] <- "Coarse LP"
+sam_data$Dust_Type[sam_data$Dust_Type == "75"] <- "Medium LP"
+sam_data$Dust_Type[sam_data$Dust_Type == "25"] <- "Fine LP"
+sam_data$Dust_Type<- factor(sam_data$Dust_Type,levels = c("Soil", "Coarse LP", "Medium LP", "Fine LP", "WT"))
 
 
 summary(rowSums(t(asvtab1)))

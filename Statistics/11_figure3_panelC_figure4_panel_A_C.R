@@ -1,5 +1,3 @@
-######Fuzzy q Gabri######
-library(FuzzyQ)
 library(phyloseq)
 library(dplyr)
 library(reshape2)
@@ -21,8 +19,8 @@ library(gridExtra)
 
 #####test different thresholds for community composition#######
 ####High abundance and High occupancy idea######
-geodata  = readRDS("/Users/gabri/OneDrive - University of Arizona/dust_project/data/dust/geo_dist_data.RDS")
-ASVtab_dust<-readRDS("/Users/gabri/OneDrive - University of Arizona/dust_project/data/dust/phyloseq_dust16sASVnames.RDS")
+geodata  = readRDS("Documents/GitHub/Dust_project/data/metadata/geo_dist_data.RDS") # to produce this file run the code "geographic_calculations.RDS"
+ASVtab_dust<-readRDS("Documents/GitHub/Dust_project/data/phyloseq_obects/phyloseq_dust16sASVnames.RDS")
 ASVtab_dust=prune_samples(sample_data(ASVtab_dust)$point!=26, ASVtab_dust)
 ASVtab_dust <- prune_taxa(taxa_sums(ASVtab_dust) > 0, ASVtab_dust)
 sam_data_dust = data.frame(ASVtab_dust@sam_data) #extract dust data from phyloseq object
@@ -43,7 +41,7 @@ asvtab_dust = data.frame(ASVtab_dust@otu_table) #extract ASVt table not transfor
 
 
 ####set a threshold for the first analysis
-threshold = 1
+threshold = 2
 
 
 
@@ -103,16 +101,20 @@ oc_ab_plot[which(rownames(oc_ab_plot) %nin% rownames(high_occupancy_ASVs) & rown
 
 
 ab_oc_curve = ggplot(oc_ab_plot, aes(Ab_bypoint, OC_points_percent)) + 
-  geom_point(aes (color= color)) +
+  geom_point(aes (color= color), size = 1) +
   scale_x_log10() + 
   theme_classic() + 
   xlab("Log(average abundance)") +
   ylab("Occupancy %") +
   theme(legend.title=element_blank(), legend.position = c(0.23, 0.85),
         legend.background = element_rect(fill = "white", color = "black")) +
-  ggtitle("Bacteria/Archaea, 1% threshold") +
+  ggtitle("Bacteria/Archaea, 2% threshold") +
   scale_color_manual( labels = c("Generalists", "Specialists", "Unclassified"),values=c("#56B4E9", "#E69F00", "#999999")) #+
 ab_oc_curve
+
+#pdf("/Users/gabri/OneDrive - University of Arizona/dust_project/3rd_draft/plots/new_figures/ab_oc_curve_bac.pdf", width = 3, height = 3)
+ab_oc_curve
+#dev.off()
 #saveRDS(ab_oc_curve,  "/Users/gabri/OneDrive - University of Arizona/dust_project/IMAGE_ELABORATION/ab_oc_curve_plot_bac.RDS" )
 
 #### plot the abundance occupancy curve
@@ -151,7 +153,7 @@ rar_ab_per_point$Dust_fraction = sam_data_dust$Dust_Type
 
 kruskal.test(high ~ Dust_fraction, data=rar_ab_per_point)
 #######kruskal wallis test
-#Kruskal-Wallis chi-squared = 20.148, df = 4, p-value = 0.0004669)
+#Kruskal-Wallis chi-squared = 12.8, df = 4, p-value = 0.01)
 DT = dunnTest(high ~ Dust_fraction,
               data=rar_ab_per_point,
               method="bh")      # Adjusts p-values for multiple comparisons;
@@ -165,9 +167,9 @@ cldList(P.adj ~ Comparison,
 melted = melt(rar_ab_per_point, stringsAsFactors = FALSE)
 
 ####ggplot
-relative_abundance_high_occupancy_bac = ggplot(melted, aes(x=Dust_fraction, y=value)) +  geom_point(position = "jitter") +
+relative_abundance_high_occupancy_bac = ggplot(melted, aes(x=Dust_fraction, y=value)) +  geom_point(position = "jitter",  alpha = 0.3) +
   geom_boxplot(outlier.shape = NA, alpha = 0)  + theme_classic() + theme(legend.position = "none") +
-  stat_summary(geom = 'text', label = c("a","b","ab","ab","b" ),fun = max,  vjust = 0) +ylab("Relative abundance") +xlab(NULL) +
+  stat_summary(geom = 'text', label = c("a","b","b","ab","b" ),fun = max,  vjust = 0) +ylab("Relative abundance") +xlab(NULL) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1)) +ggtitle("Bact/Arch, Generalists")
 relative_abundance_high_occupancy_bac
 #saveRDS(relative_abundance_high_occupancy_bac, "/Users/gabri/OneDrive - University of Arizona/dust_project/Second_draft/new_figures/figure4panelA.RDS")
@@ -210,24 +212,25 @@ melted = melt(rar_ab_per_point, stringsAsFactors = FALSE)
 
 
 ####ggplot
-relative_abundance_high_abudance_bac = ggplot(melted, aes(x=Dust_fraction, y=value)) +  geom_point(position = "jitter") +
+relative_abundance_high_abudance_bac = ggplot(melted, aes(x=Dust_fraction, y=value)) +  geom_point(position = "jitter", alpha = 0.3) +
   geom_boxplot(outlier.shape = NA, alpha = 0)  + theme_classic() + theme(legend.position = "none") +
   stat_summary(geom = 'text', label = c("a","a","a","a","a" ),fun = max,  vjust = 0) +ylab(NULL) +xlab(NULL) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1)) +ggtitle("Bact/Arch, Specialists") +ylab("Relative abundance")
 relative_abundance_high_abudance_bac
-saveRDS(relative_abundance_high_abudance_bac, "/Users/gabri/OneDrive - University of Arizona/dust_project/Second_draft/new_figures/figure4panelB.RDS")
-ggsave("/Users/gabri/OneDrive - University of Arizona/dust_project/Second_draft/new_figures/figure4/panelB.pdf",   device = pdf)
+#saveRDS(relative_abundance_high_abudance_bac, "/Users/gabri/OneDrive - University of Arizona/dust_project/Second_draft/new_figures/figure4panelB.RDS")
+#ggsave("/Users/gabri/OneDrive - University of Arizona/dust_project/Second_draft/new_figures/figure4/panelB.pdf",   device = pdf)
 
-a =ggarrange(relative_abundance_high_occupancy_bac, relative_abundance_high_abudance_bac, ncol = 2)
+a =ggarrange(ab_oc_curve, relative_abundance_high_occupancy_bac, relative_abundance_high_abudance_bac, ncol = 3)
 a
+ggsave("gen_spec.pdf", plot = a ,"/Users/gabri/OneDrive - University of Arizona/dust_project/4th_draft/new_figures/", device = "pdf", height = 3 , width = 4.5)
 #saveRDS(a, file = "/Users/gabri/OneDrive - University of Arizona/dust_project/IMAGE_ELABORATION/boxplots_bacteria.rds" )
 
 
 
-list = list(ab_oc_curve_plot_bac, relative_abundance_high_occupancy_bac,relative_abundance_high_abudance_bac)
+#list = list(ab_oc_curve_plot_bac, relative_abundance_high_occupancy_bac,relative_abundance_high_abudance_bac)
 
-grid.arrange(
-  grobs = list,
-  layout_matrix = rbind(c(1, 1, 2),
-                        c(1, 1, 3))
-)
+#grid.arrange(
+#  grobs = list,
+#  layout_matrix = rbind(c(1, 1, 2),
+#                        c(1, 1, 3))
+#)

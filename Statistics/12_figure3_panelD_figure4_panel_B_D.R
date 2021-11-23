@@ -23,10 +23,10 @@ geodata  = readRDS("Documents/GitHub/Dust_project/data/metadata/geo_dist_dataITS
 ASVtab_dust<-readRDS("Documents/GitHub/Dust_project/data/phyloseq_obects/phyloseq_dustITS_ASVnames.RDS")
 sam_data_dust = data.frame(ASVtab_dust@sam_data) #extract dust data from phyloseq object
 sam_data_dust$Dust_Type[sam_data_dust$Dust_Type == "Dust_Gen"] <- "WT"
-sam_data_dust$Dust_Type[sam_data_dust$Dust_Type == "500"] <- "Coarse SP"
-sam_data_dust$Dust_Type[sam_data_dust$Dust_Type == "75"] <- "Medium SP"
-sam_data_dust$Dust_Type[sam_data_dust$Dust_Type == "25"] <- "Fine SP"
-sam_data_dust$Dust_Type<- factor(sam_data_dust$Dust_Type,levels = c("Soil", "Coarse SP", "Medium SP", "Fine SP", "WT"))
+sam_data_dust$Dust_Type[sam_data_dust$Dust_Type == "500"] <- "Coarse SS"
+sam_data_dust$Dust_Type[sam_data_dust$Dust_Type == "75"] <- "Medium SS"
+sam_data_dust$Dust_Type[sam_data_dust$Dust_Type == "25"] <- "Fine SS"
+sam_data_dust$Dust_Type<- factor(sam_data_dust$Dust_Type,levels = c("Soil", "Coarse SS", "Medium SS", "Fine SS", "WT"))
 
 
 
@@ -39,7 +39,7 @@ asvtab_dust = data.frame(ASVtab_dust@otu_table) #extract ASVt table not transfor
 
 
 ####set a threshold for the first analysis
-threshold = 1
+threshold = 0.5
 
 
 
@@ -106,8 +106,8 @@ ab_oc_curve = ggplot(oc_ab_plot, aes(Ab_bypoint, OC_points_percent)) +
   ylab("Occupancy %") +
   theme(legend.title=element_blank(), legend.position = c(0.23, 0.85),
         legend.background = element_rect(fill = "white", color = "black")) +
-  ggtitle("Fungi, 1% threshold") +
-  scale_color_manual( labels = c("Specialists", "Generalists", "Unclassified"),values=c("#56B4E9", "#E69F00", "#999999")) #+
+  ggtitle("Fungi, 2% threshold") +
+  scale_color_manual( labels = c("Specialists", "Generalists", "Unclassified"),values=c("#E69F00", "#56B4E9", "#999999")) #+
 ab_oc_curve
 
 #ggsave( "/Users/gabri/OneDrive - University of Arizona/dust_project/Second_draft/new_figures/ab_oc_curve_fung.pdf",
@@ -148,7 +148,7 @@ cldList(P.adj ~ Comparison,
 melted = melt(rar_ab_per_point, stringsAsFactors = FALSE)
 
 ####ggplot
-relative_abundance_high_occupancy_bac = ggplot(melted, aes(x=Dust_fraction, y=value)) +  geom_point(position = "jitter") +
+relative_abundance_high_occupancy_bac = ggplot(melted, aes(x=Dust_fraction, y=value)) +  geom_point(position = "jitter", alpha = 0.3) +
   geom_boxplot(outlier.shape = NA, alpha = 0)  + theme_classic() + theme(legend.position = "none") +
   stat_summary(geom = 'text', label = c("a","a","a","a","a" ),fun = max,  vjust = 0) +ylab("Relative abundance") +xlab(NULL) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1)) +ggtitle("Fungi, generalists")
@@ -191,7 +191,7 @@ melted = melt(rar_ab_per_point, stringsAsFactors = FALSE)
 
 
 ####ggplot
-relative_abundance_high_abudance_bac = ggplot(melted, aes(x=Dust_fraction, y=value)) +  geom_point(position = "jitter") +
+relative_abundance_high_abudance_bac = ggplot(melted, aes(x=Dust_fraction, y=value)) +  geom_point(position = "jitter", alpha = 0.3) +
   geom_boxplot(outlier.shape = NA, alpha = 0)  + theme_classic() + theme(legend.position = "none") +
   stat_summary(geom = 'text', label = c("a","a","a","a","a" ),fun = max,  vjust = 0) +ylab(NULL) +xlab(NULL) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1)) +ggtitle("Fungi, specialists") +ylab("Relative abundance")
@@ -199,11 +199,11 @@ relative_abundance_high_abudance_bac
 #saveRDS(relative_abundance_high_abudance_bac, "/Users/gabri/OneDrive - University of Arizona/dust_project/Second_draft/new_figures/figure4panelD.RDS")
 #ggsave("/Users/gabri/OneDrive - University of Arizona/dust_project/Second_draft/new_figures/figure4/panel_12.pdf",   device = pdf)
 
-a =ggarrange(relative_abundance_high_occupancy_bac, relative_abundance_high_abudance_bac, ncol = 2)
+a =ggarrange(ab_oc_curve, relative_abundance_high_occupancy_bac, relative_abundance_high_abudance_bac, ncol = 3)
 a
-saveRDS(a, file = "/Users/gabri/OneDrive - University of Arizona/dust_project/IMAGE_ELABORATION/boxplots_fungi.rds" )
+#saveRDS(a, file = "/Users/gabri/OneDrive - University of Arizona/dust_project/IMAGE_ELABORATION/boxplots_fungi.rds" )
 
-
+ggsave("gen_spec_fun.pdf", plot = a ,"/Users/gabri/OneDrive - University of Arizona/dust_project/4th_draft/new_figures/", device = "pdf", height = 3 , width = 4.5)
 
 list = list(ab_oc_curve_plot_bac, relative_abundance_high_occupancy_bac,relative_abundance_high_abudance_bac)
 

@@ -1,6 +1,6 @@
 library(reshape)
 library(ggplot2)
-
+library(ggpubr)
 
 
 
@@ -146,33 +146,56 @@ graphtotal
 #  stat_summary(fun.data = give.n, geom = "text", fun.y = median,
 #               position = position_dodge(width = 0.75))
 ##########statistical tests##########
-wilcox.test(graph500ab_oc$Occupancy ~  graph500ab_oc$delta)#W = 688.5, p-value = 0.8131
-wilcox.test(graph75ab_oc$Occupancy ~  graph75ab_oc$delta)#W = 632.5, p-value = 0.4218
-wilcox.test(graph25ab_oc$Occupancy ~  graph25ab_oc$delta)#W = 1625, p-value = 0.05613
-wilcox.test(graphDGab_oc$Occupancy ~  graphDGab_oc$delta)#W = 2691, p-value = 0.09091
+wilcox.test(graph500ab_oc$Occupancy ~  graph500ab_oc$delta)#W = 1040, p-value = 0.2666
+wilcox.test(graph75ab_oc$Occupancy ~  graph75ab_oc$delta)#W = 1554.5, p-value = 0.9418
+wilcox.test(graph25ab_oc$Occupancy ~  graph25ab_oc$delta)#W = 2067.5, p-value = 0.4531
+wilcox.test(graphDGab_oc$Occupancy ~  graphDGab_oc$delta)#W = 3287, p-value = 0.02394
 
-wilcox.test(graph500ab_oc$`log(Mean Rel Abundance)` ~  graph500ab_oc$delta)#W = 731, p-value = 0.4855
-wilcox.test(graph75ab_oc$`log(Mean Rel Abundance)`  ~  graph75ab_oc$delta)#W = 767, p-value = 0.5648
-wilcox.test(graph25ab_oc$`log(Mean Rel Abundance)`  ~  graph25ab_oc$delta)#W = 1872, p-value = 0.000435
-wilcox.test(graphDGab_oc$`log(Mean Rel Abundance)`  ~  graphDGab_oc$delta)#W = 2935, p-value = 0.3863
+wilcox.test(graph500ab_oc$`log(Mean Rel Abundance)` ~  graph500ab_oc$delta)#W = 1194, p-value = 0.9859
+wilcox.test(graph75ab_oc$`log(Mean Rel Abundance)`  ~  graph75ab_oc$delta)#W = 1768, p-value = 0.2444
+wilcox.test(graph25ab_oc$`log(Mean Rel Abundance)`  ~  graph25ab_oc$delta)#W = 2613, p-value = 0.0005275
+wilcox.test(graphDGab_oc$`log(Mean Rel Abundance)`  ~  graphDGab_oc$delta)#W = 3741, p-value = 0.3237
 
-wilcox.test(graph500ab_oc$`Geographic Range (km2)` ~  graph500ab_oc$delta)#W = 198, p-value = 0.4007
-wilcox.test(graph75ab_oc$`Geographic Range (km2)`   ~  graph75ab_oc$delta)#W = 200, p-value = 0.1138
-wilcox.test(graph25ab_oc$`Geographic Range (km2)`   ~  graph25ab_oc$delta)#W = 283, p-value = 0.6925
-wilcox.test(graphDGab_oc$`Geographic Range (km2)`   ~  graphDGab_oc$delta)#W = 793, p-value = 0.02168
+wilcox.test(graph500ab_oc$`Geographic Range (km2)` ~  graph500ab_oc$delta)#W = 336, p-value = 0.03368
+wilcox.test(graph75ab_oc$`Geographic Range (km2)`   ~  graph75ab_oc$delta)#W = 484, p-value = 0.1883
+wilcox.test(graph25ab_oc$`Geographic Range (km2)`   ~  graph25ab_oc$delta)#W = 452, p-value = 0.6417
+wilcox.test(graphDGab_oc$`Geographic Range (km2)`   ~  graphDGab_oc$delta)#W = 1049.5, p-value = 0.008294
 
 
-wilcox.test(graph500ab_oc$`Max Distance (km)` ~  graph500ab_oc$delta)#W = 299, p-value = 0.05487
-wilcox.test(graph75ab_oc$`Max Distance (km)`   ~  graph75ab_oc$delta)#W = 313, p-value = 0.007989
-wilcox.test(graph25ab_oc$`Max Distance (km)`   ~  graph25ab_oc$delta)#W = 601, p-value = 0.2102
-wilcox.test(graphDGab_oc$`Max Distance (km)`   ~  graphDGab_oc$delta)#W = 1725.5, p-value = 0.01817
+wilcox.test(graph500ab_oc$`Max Distance (km)` ~  graph500ab_oc$delta)#W = 526, p-value = 0.006226
+wilcox.test(graph75ab_oc$`Max Distance (km)`   ~  graph75ab_oc$delta)#W = 762, p-value = 0.01446
+wilcox.test(graph25ab_oc$`Max Distance (km)`   ~  graph25ab_oc$delta)#W = 875.5, p-value = 0.06603
+wilcox.test(graphDGab_oc$`Max Distance (km)`   ~  graphDGab_oc$delta)#W = 2140.5, p-value = 0.003595
 
 library(reshape)
 library(ggplot2)
-pvalues =  c(0.4007,0.1138,0.6925,0.02168)
-p.adjust(pvalues, method = "BH")
-pvalues =  c(0.05487,0.007989,0.2102,0.01817)
-p.adjust(pvalues, method = "BH")
+
+
+
+
+
+unique(graph_total$variable)
+#######eliminate relative abundance
+graph_total = graph_total[graph_total$variable != "log(Mean Rel Abundance)",]
+graphtotal = ggplot(graph_total, aes(x=Dust_fraction, y=value, fill = delta )) + 
+  #geom_point(position=position_jitterdodge(),alpha=0.2, aes(fill=delta)) +
+  geom_boxplot(trim=FALSE, alpha = 0.6, outlier.shape = NA) + facet_wrap(variable ~ ., scales = "free_y", nrow = 1) +
+  theme_classic()  +
+  scale_fill_manual(name = "Sample", labels = c("Soil", "Dust"), values = c("#996600","#4DBBD5B2"))+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) + ylab(NULL) + xlab(NULL) +ggtitle("Bacteria/Archaea")
+graphtotal
+
+
+
+
+
+
+
+
+
+
+
+
 
 ######Fungi##############################
 geodata  = readRDS("/Users/gabri/Documents/GitHub/Dust_project/data/metadata/geo_dist_dataITS.RDS")
@@ -313,15 +336,15 @@ graphtotal_fung = ggplot(graph_total, aes(x=Dust_fraction, y=value, fill = delta
 graphtotal_fung
 
 ##########statistical tests##########
-wilcox.test(graph500ab_oc$Occupancy ~  graph500ab_oc$delta)#W = 12.5, p-value = 0.4734
-wilcox.test(graph75ab_oc$Occupancy ~  graph75ab_oc$delta)#W = 38, p-value = 0.1231
-wilcox.test(graph25ab_oc$Occupancy ~  graph25ab_oc$delta)#W = 58, p-value = 0.2624
-wilcox.test(graphDGab_oc$Occupancy ~  graphDGab_oc$delta)#W = 265.5, p-value = 0.3263
+wilcox.test(graph500ab_oc$Occupancy ~  graph500ab_oc$delta)#NS
+wilcox.test(graph75ab_oc$Occupancy ~  graph75ab_oc$delta)#NS
+wilcox.test(graph25ab_oc$Occupancy ~  graph25ab_oc$delta)#NS
+wilcox.test(graphDGab_oc$Occupancy ~  graphDGab_oc$delta)#NS
 
 wilcox.test(graph500ab_oc$`log(Mean Rel Abundance)` ~  graph500ab_oc$delta)#W = 10, p-value = 0.9091
-wilcox.test(graph75ab_oc$`log(Mean Rel Abundance)`  ~  graph75ab_oc$delta)#W = 49, p-value = 0.001332
+wilcox.test(graph75ab_oc$`log(Mean Rel Abundance)`  ~  graph75ab_oc$delta)#W = 50, p-value = 0.0006
 wilcox.test(graph25ab_oc$`log(Mean Rel Abundance)`  ~  graph25ab_oc$delta)#W = 64, p-value = 0.1087
-wilcox.test(graphDGab_oc$`log(Mean Rel Abundance)`  ~  graphDGab_oc$delta)#W = 2935, p-value = 0.3863
+wilcox.test(graphDGab_oc$`log(Mean Rel Abundance)`  ~  graphDGab_oc$delta)#W = 258, p-value = 0.4284
 
 wilcox.test(graph500ab_oc$`Geographic Range (km2)` ~  graph500ab_oc$delta)#NS
 wilcox.test(graph75ab_oc$`Geographic Range (km2)`   ~  graph75ab_oc$delta)#NS
@@ -334,9 +357,20 @@ wilcox.test(graph75ab_oc$`Max Distance (km)`   ~  graph75ab_oc$delta)#NS
 wilcox.test(graph25ab_oc$`Max Distance (km)`   ~  graph25ab_oc$delta)#NS
 wilcox.test(graphDGab_oc$`Max Distance (km)`   ~  graphDGab_oc$delta)#WNS
 
+graph_total = graph_total[graph_total$variable != "log(Mean Rel Abundance)",]
+graphtotal_fung = ggplot(graph_total, aes(x=Dust_fraction, y=value, fill = delta )) + 
+  #geom_point(position=position_jitterdodge(),alpha=0.2, aes(fill=delta)) +
+  geom_boxplot(trim=FALSE, alpha = 0.6, outlier.shape = NA) + facet_wrap(variable ~ ., scales = "free_y", nrow = 1) +
+  theme_classic()  +
+  scale_fill_manual(name = "Sample", labels = c("Soil", "Dust"), values = c("#996600","#4DBBD5B2"))+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) + ylab(NULL) + xlab(NULL) +ggtitle("Bacteria/Archaea")
+graphtotal_fung
 
-library(ggpubr)
+
+
+
 ggarrange(graphtotal,graphtotal_fung, ncol = 1, common.legend = TRUE)
+ggsave("/Users/gabri/OneDrive - University of Arizona/dust_project/4th_draft/new_figures/figure4.pdf", device = "pdf", height = 6, width = 7.5)
 
 
 
