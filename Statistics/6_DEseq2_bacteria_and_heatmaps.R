@@ -25,21 +25,21 @@ diagdds = phyloseq_to_deseq2(asvtab, ~  sample +  Dust_Type) #convert phyloseq i
 diagdds$Dust_Type <- relevel(diagdds$Dust_Type, ref = "Soil") ####relevel placing soil as reference
 diagdds = DESeq(diagdds, test="Wald", fitType="parametric")
 resultsNames(diagdds)
-
+saveRDS(diagdds, file = "/Users/gabri/Documents/GitHub/Dust_project/data/Deseq2/deseq_res.RDS")
 
 
 
 
 
 #############################RESULTS WT (Wind tunnel (orginally called Dust generator )) bacteria#############################
-res = results(diagdds,  name=c("Dust_Type_Dust_Gen_vs_Soil"), pAdjustMethod = "BH", alpha =  0.1)
+res = results(diagdds,  name=c("Dust_Type_Dust_Gen_vs_Soil"), pAdjustMethod = "BH", alpha =  0.05)
 summary(res)
 resLFC <- lfcShrink(diagdds, coef=c("Dust_Type_Dust_Gen_vs_Soil"), type="apeglm")
 summary(resLFC, pAdjustMethod = "BH", alpha =  0.05) #292 up , 289 down
 par(mfrow=c(1,1))
 DESeq2::plotMA(resLFC)
 ggplot(as(resLFC, "data.frame"), aes(x = pvalue)) +
-  geom_histogram(binwidth = 0.05, fill = "Royalblue", boundary = 0)
+  geom_histogram(binwidth = 0.01, fill = "Royalblue", boundary = 0)
 alpha = 0.05
 Log2foldchanges = data.frame(resLFC)
 Log2foldchanges = cbind(Log2foldchanges, as(tax_table(asvtab)[rownames(Log2foldchanges), ], "matrix"))
@@ -104,7 +104,7 @@ rm(database)
 sigtabDG = sigtabDG[rownames(sigtabDG) %in% soil_guys |rownames(sigtabDG) %in% dust_guys, ]
 sum(sigtabDG$log2FoldChange>0) #125 (119 at alpha 0.05)
 sum(sigtabDG$log2FoldChange<0) #70 (70 at alpha 0.05)
-saveRDS(sigtabDG, file = "/Users/gabri/Documents/GitHub/Dust_project/data/Deseq2/sigtabDEseq21DG.RDS")
+#saveRDS(sigtabDG, file = "/Users/gabri/Documents/GitHub/Dust_project/data/Deseq2/sigtabDEseq21DG.RDS")
 
 
 
@@ -242,7 +242,7 @@ rm(database)
 sigtab500 = sigtab500[rownames(sigtab500) %in% soil_guys |rownames(sigtab500) %in% dust_guys, ]
 sum(sigtab500$log2FoldChange>0) #32
 sum(sigtab500$log2FoldChange<0) #43
-saveRDS(sigtab500, file = "/Users/gabri/Documents/GitHub/Dust_project/data/Deseq2/sigtabDEseq21500.RDS")
+#saveRDS(sigtab500, file = "/Users/gabri/Documents/GitHub/Dust_project/data/Deseq2/sigtabDEseq21500.RDS")
 
 ##########heatmap 500#############
 
@@ -262,7 +262,7 @@ mat = as.matrix(asvtab5[,colnames(asvtab5) %in% rownames(metadata)])
 
 ###############Change the names of the sampling points- dust%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 col = metadata$Dust_Type
-levels(col)[levels(col)=="500"] <- "Coarse SS"
+levels(col)[levels(col)=="500"] <- "Coarse LP"
 col1 = metadata$Point_type
 col1[col1=="Santa_Cruz_River_bank"]<-"SCR"
 col1[col1=="Picacho_Peak"]<-"PP"
@@ -274,7 +274,7 @@ mat_col <- data.frame(Sample = col)
 
 #rownames(mat_col) <- colnames(asvtab5)
 mat_colors <- list(Sample = c("blue","red"), Sampling_point = c( PP = "#D16103" ,SCR ="#00AFBB" , DS1 = "#E7B800",DS2 ="#52854C"))
-col[col=="500"]<-"Coarse SS"
+col[col=="500"]<-"Coarse LP"
 names(mat_colors$Sample) <- unique(col)
 
 ######plot it%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%#
@@ -313,8 +313,8 @@ a = pheatmap(
   annotation_col    = mat_col,
   annotation_colors = mat_colors,
   drop_levels       = TRUE,
-  #fontsize          = 14,
-  main              = "Bacteria and Archaea, Coarse SS samples",
+  fontsize          = 8,
+  main              = "Bacteria and Archaea, Coarse LP samples",
   cluster_cols =  F,
   treeheight_row = 0
 )
@@ -358,7 +358,7 @@ rm(database)
 sigtab75 = sigtab75[rownames(sigtab75) %in% soil_guys |rownames(sigtab75) %in% dust_guys, ]
 sum(sigtab75$log2FoldChange>0) #51
 sum(sigtab75$log2FoldChange<0) #49
-saveRDS(sigtab75, file = "/Users/gabri/Documents/GitHub/Dust_project/data/Deseq2/sigtabDEseq2175.RDS")
+#saveRDS(sigtab75, file = "/Users/gabri/Documents/GitHub/Dust_project/data/Deseq2/sigtabDEseq2175.RDS")
 
 
 #########match it with metadata%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -368,7 +368,7 @@ mat = as.matrix(asvtab5[,colnames(asvtab5) %in% rownames(metadata)])
 
 ###############Change the names of the sampling points- dust%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 col = metadata$Dust_Type
-levels(col)[levels(col)=="75"] <- "Medium SS"
+levels(col)[levels(col)=="75"] <- "Medium LP"
 #col[col=="Dust_Gen"]<-as.factor("Dust")
 col1 = metadata$Point_type
 col1[col1=="Santa_Cruz_River_bank"]<-"SCR"
@@ -381,7 +381,7 @@ mat_col <- data.frame(Sample = col)
 
 #rownames(mat_col) <- colnames(asvtab5)
 mat_colors <- list(Sample = c("blue","red"), Sampling_point = c( PP = "#D16103" ,SCR ="#00AFBB" , DS1 = "#E7B800",DS2 ="#52854C"))
-col[col=="75"]<-"Medium SS"
+col[col=="75"]<-"Medium LP"
 names(mat_colors$Sample) <- unique(col)
 
 ######plot it%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%#
@@ -424,7 +424,7 @@ a = pheatmap(
   annotation_colors = mat_colors,
   drop_levels       = TRUE,
   fontsize          = 6,
-  main              = "Bacteria and Archaea, Medium SS samples",
+  main              = "Bacteria and Archaea, Medium LP samples",
   cluster_cols =  F,
   treeheight_row = 0
 )
@@ -465,7 +465,7 @@ rm(database)
 sigtab25 = sigtab25[rownames(sigtab25) %in% soil_guys |rownames(sigtab25) %in% dust_guys, ]
 sum(sigtab25$log2FoldChange>0) #67
 sum(sigtab25$log2FoldChange<0) #46
-saveRDS(sigtab25, file = "/Users/gabri/Documents/GitHub/Dust_project/data/Deseq2/sigtabDEseq2125.RDS")
+#saveRDS(sigtab25, file = "/Users/gabri/Documents/GitHub/Dust_project/data/Deseq2/sigtabDEseq2125.RDS")
 
 
 ###############heatmap 25#########
@@ -485,7 +485,7 @@ mat = as.matrix(asvtab5[,colnames(asvtab5) %in% rownames(metadata)])
 
 ###############Change the names of the sampling points- dust%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 col = metadata$Dust_Type
-levels(col)[levels(col)=="25"] <- "Fine SP"
+levels(col)[levels(col)=="25"] <- "Fine LP"
 col1 = metadata$Point_type
 col1[col1=="Santa_Cruz_River_bank"]<-"SCR"
 col1[col1=="Picacho_Peak"]<-"PP"
@@ -497,7 +497,7 @@ mat_col <- data.frame(Sample = col)
 
 #rownames(mat_col) <- colnames(asvtab5)
 mat_colors <- list(Sample = c("blue","red"), Sampling_point = c( PP = "#D16103" ,SCR ="#00AFBB" , DS1 = "#E7B800",DS2 ="#52854C"))
-col[col=="25"]<-"Fine SP"
+col[col=="25"]<-"Fine LP"
 names(mat_colors$Sample) <- unique(col)
 
 ######plot it%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%#
@@ -536,7 +536,7 @@ a = pheatmap(
   annotation_colors = mat_colors,
   drop_levels       = TRUE,
   fontsize          = 8,
-  main              = "Bacteria and Archaea, Fine SS samples",
+  main              = "Bacteria and Archaea, Fine LP samples",
   treeheight_row = 0,
   cluster_cols =  F
 )
