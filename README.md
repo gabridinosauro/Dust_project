@@ -22,6 +22,6 @@ The output will therefore create the four data sets used for statistical analysi
       c)Dust dataset for Bacteria/Archaea,  this includes soil samples and dust samples from the locations PP, SCR, DS1 and DS2,<br />
       d)Dust dataset for Fungi,  this includes soil samples and dust samples from the locations PP, SCR, DS1 and DS2.<br />
 
-3. The third step includes the statistical analyses done, consisting in various scripts from 1 to 14, in the stats folder, recreating step by step the analysis done in the paper. (script number 2 "2_geographic_calculations.R" will produce the file "geo_dist_data.RDS" and "geo_dist_dataITS.RDS" necessary for some of the following scripts;
+3. The third step includes the statistical analyses done, consisting in various scripts from 1 to 17, in the stats folder, recreating step by step the analysis done in the paper. (script number 2 "2_geographic_calculations.R" will produce the file "geo_dist_data.RDS" and "geo_dist_dataITS.RDS" necessary for some of the following scripts;
 scripts "6_DEseq2_bacteria_and_heatmaps.R " and "7_DEseq2_ITS_and_heatmaps.R" will create all the files within the folder "data/Deseq2", also necessary for some of the scripts.
 
