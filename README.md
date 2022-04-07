@@ -2,7 +2,8 @@
 
 Hello,
 This is a step by step process to repeat the data analysis done in the paper:
-"Ride the dust: Linking dust dispersal and spatial distribution of microorganisms across arid semi-arid landscapes"
+"Ride the dust: Linking dust dispersal and spatial distribution of microorganisms across arid semi-arid landscapes" published here:
+https://sfamjournals.onlinelibrary.wiley.com/doi/10.1111/1462-2920.15998
 
 first you have to download the data.
 There are two options:
